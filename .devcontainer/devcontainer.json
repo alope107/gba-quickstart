@@ -1,0 +1,4 @@
+{
+  "name": "Butano (devkitARM)",
+  "image": "devkitpro/devkitarm:latest"
+}
