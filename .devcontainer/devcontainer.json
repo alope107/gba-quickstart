@@ -1,4 +1,5 @@
 {
   "name": "Butano (devkitARM)",
-  "image": "devkitpro/devkitarm:latest"
+  "image": "devkitpro/devkitarm:latest",
+  "postCreateCommand": "bash -lc .devcontainer/postCreate.sh"
 }
