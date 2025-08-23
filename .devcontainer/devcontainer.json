@@ -16,6 +16,7 @@
         "C_Cpp.default.cppStandard": "c++20",
         "C_Cpp.default.includePath": [
           "${workspaceFolder}/game/include",
+          "${workspaceFolder}/game/build",
           "${workspaceFolder}/third_party/butano/butano/include",
           "${workspaceFolder}/third_party/butano/common/include"
         ],
