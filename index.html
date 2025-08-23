@@ -1,329 +1,180 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>EmulatorJS</title>
-        <link rel = icon href = docs/favicon.ico sizes = "16x16 32x32 48x48 64x64" type = image/vnd.microsoft.icon>
-        <meta name = viewport content = "width = device-width, initial-scale = 1">
-        <style>
-             body, html {
-                height: 100%;
-                background-color: black;
-                color: white;
-            }
+  <head>
+    <title>EmulatorJS – GBA</title>
+    <link rel="icon" href="docs/favicon.ico" sizes="16x16 32x32 48x48 64x64" type="image/vnd.microsoft.icon">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body, html {
+        height: 100%;
+        background-color: black;
+        color: white;
+      }
+      body { margin: 0; overflow: hidden; }
+      body, #box, #top {
+        display: flex; align-items: center; justify-content: center; flex-direction: column;
+      }
+      #box {
+        color: #aaa; min-height: 12em; width: 30em; max-width: 90%;
+        background-color: #333; border-radius: 0.4em; border: 2px solid #555;
+        position: relative; flex-direction: column; transition-duration: 0.2s;
+        overflow: auto; font-family: monospace; font-weight: bold; font-size: 16px;
+        margin: 5px; text-align: center; padding: 10px;
+      }
+      #box:hover { border-color: #1AAFFF; color: #ddd }
+      #display { width: 100%; height: 100% }
+      .logo { width: 130px; height: 130px; filter: drop-shadow(0 0 8px white); }
+      #top { margin: 5px; }
+      .rom-list-title { margin: 0.5em 0 0.25em; font-size: 18px; color: #ddd; }
+      .hint { font-size: 12px; color: #888; margin-bottom: 0.5em; }
+      .rom-btn {
+        padding: 0.6em 0.4em; margin: 0.25em; width: 20em; max-width: 100%;
+        font-family: monospace; font-weight: bold; font-size: 16px;
+        background-color: #444; color: #aaa; border-radius: 0.4em; border: 1px solid #555;
+        cursor: pointer; transition-duration: 0.2s;
+      }
+      .rom-btn:hover { background-color: #666; color: #ddd }
+    </style>
+  </head>
 
-            body {
-                margin: 0;
-                overflow: hidden;
-            }
+  <body>
+    <div id="top">
+      <h1>EmulatorJS - GBA</h1>
+      <img src="docs/Logo-light.png" alt="Logo" class="logo">
+      <br>
+    </div>
+    <div id="box">
+      <div class="rom-list-title">Select a GBA ROM</div>
+      <div class="hint">Looking in <code>roms/</code>. Or use <code>?rom=filename.gba</code>.</div>
+      <div id="rom-list">Loading…</div>
+    </div>
 
-            body, #box, #top {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-direction: column;
-            }
+    <script>
+      // ---- Options (kept for convenience) ----
+      let enableDebug = false;
+      let enableThreads = false;
+      let browserMode;
 
-            #box {
-                color: #aaa;
-                min-height: 12em;
-                width: 30em;
-                max-width: 90%;
-                background-color: #333;
-                border-radius: 0.4em;
-                border: 2px solid #555;
-                position: relative;
-                flex-direction: column;
-                transition-duration: 0.2s;
-                overflow: auto;
-                font-family: monospace;
-                font-weight: bold;
-                font-size: 16px;
-                margin: 5px;
-                text-align: center;
-                padding: 10px;
-            }
+      const urlParams = new URLSearchParams(window.location.search);
+      if (parseInt(urlParams.get("debug")) === 1 || urlParams.get("debug") === "true") {
+        enableDebug = true;
+        console.log("Debug is enabled");
+      } else {
+        console.log("Debug is disabled");
+      }
 
-            #box:hover {
-                border-color: #1AAFFF;
-                color: #ddd
-            }
+      if (parseInt(urlParams.get("threads")) === 1 || urlParams.get("threads") === "true") {
+        if (window.SharedArrayBuffer) {
+          enableThreads = true;
+          console.log("Threads are enabled");
+        } else {
+          console.warn("Threads are disabled as SharedArrayBuffer is not available.");
+          console.log("Threads are disabled");
+        }
+      } else {
+        console.log("Threads are disabled");
+      }
 
-            #display {
-                width: 100%;
-                height: 100%
-            }
+      if (urlParams.get("browserMode")) {
+        browserMode = urlParams.get("browserMode");
+      }
 
-            select, button, .rom-btn {
-                padding: 0.6em 0.4em;
-                margin: 0.25em;
-                width: 20em;
-                max-width: 100%;
-                font-family: monospace;
-                font-weight: bold;
-                font-size: 16px;
-                background-color: #444;
-                color: #aaa;
-                border-radius: 0.4em;
-                border: 1px solid #555;
-                cursor: pointer;
-                transition-duration: 0.2s
-            }
+      // If a rom query parameter is present, load immediately; otherwise list roms/.
+      if (urlParams.get("rom")) {
+        console.log(`Loading ROM from URL: roms/${urlParams.get("rom")}`);
+        run(urlParams.get("rom"));
+      } else {
+        listRoms();
+      }
 
-            select:hover, button:hover, .rom-btn:hover {
-                background-color: #666;
-                color: #ddd
-            }
+      // List only .gba files under roms/
+      async function listRoms() {
+        const container = document.getElementById("rom-list");
+        const isGBA = (name) => name.toLowerCase().endsWith(".gba");
 
-            .logo {
-                width: 130px;
-                height: 130px;
-                filter: drop-shadow(0 0 8px white);
-            }
+        // Try manifest.json first
+        try {
+          const r = await fetch("roms/manifest.json", { cache: "no-store" });
+          if (r.ok) {
+            const arr = await r.json();
+            renderList(Array.isArray(arr) ? arr.filter(isGBA) : []);
+            return;
+          }
+        } catch (_) {}
 
-            #top {
-                margin: 5px;
-            }
+        // Fallback: fetch directory index and scrape links
+        try {
+          const r = await fetch("roms/", { cache: "no-store" });
+          const html = await r.text();
+          const doc = new DOMParser().parseFromString(html, "text/html");
+          const names = Array.from(doc.querySelectorAll("a"))
+            .map(a => a.getAttribute("href") || "")
+            .filter(h => h && !h.startsWith("?") && !h.startsWith("/"))
+            .map(h => decodeURIComponent(h.replace(/\/$/, "")))
+            .filter(isGBA)
+            .sort((a,b) => a.localeCompare(b, undefined, {sensitivity:"base"}));
+          renderList(names);
+        } catch (e) {
+          console.error("Could not list roms/:", e);
+          container.textContent = "No ROMs found in roms/.";
+        }
 
-            .rom-list-title {
-                margin: 0.5em 0 0.25em;
-                font-size: 18px;
-                color: #ddd;
-            }
+        function renderList(files) {
+          const c = document.getElementById("rom-list");
+          c.innerHTML = "";
+          if (!files.length) {
+            c.textContent = "No ROMs found in roms/.";
+            return;
+          }
+          files.forEach(name => {
+            const btn = document.createElement("button");
+            btn.className = "rom-btn";
+            btn.textContent = name;
+            btn.onclick = () => run(name);
+            c.appendChild(btn);
+          });
+        }
+      }
 
-            .hint {
-                font-size: 12px;
-                color: #888;
-                margin-bottom: 0.5em;
-            }
-        </style>
-    </head>
+      async function run(file) {
+        const url = `roms/${file}`;
+        const parts = file.split(".");
 
-    <body>
-        <div id="top">
-            <h1>EmulatorJS Demo</h1>
-            <img src="docs/Logo-light.png" alt="Logo" class="logo">
-            <br>
-        </div>
-        <div id="box">
-            <div class="rom-list-title">Select a ROM</div>
-            <div class="hint">Looking in <code>roms/</code>. You can also use <code>?rom=filename.gba</code>.</div>
-            <div id="rom-list">Loading…</div>
-        </div>
+        // Build display container
+        const div = document.createElement("div");
+        const sub = document.createElement("div");
+        const script = document.createElement("script");
 
-        <script>
-            let enableDebug = false;
-            let enableThreads = false;
-            let browserMode;
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
-            if (parseInt(urlParams.get("debug")) === 1 || urlParams.get("debug") === "true") {
-                enableDebug = true;
-                console.log("Debug is enabled");
-            } else {
-                console.log("Debug is disabled");
-            }
+        sub.id = "game";
+        div.id = "display";
 
-            if (parseInt(urlParams.get("threads")) === 1 || urlParams.get("threads") === "true") {
-                if (window.SharedArrayBuffer) {
-                    enableThreads = true;
-                    console.log("Threads are enabled");
-                } else {
-                    console.warn("Threads are disabled as SharedArrayBuffer is not available. Threads requires two headers to be set when sending you html page. See https://stackoverflow.com/a/68630724");
-                    console.log("Threads are disabled");
-                }
-            } else {
-                console.log("Threads are disabled");
-            }
+        const top = document.getElementById("top");
+        if (top) top.remove();
+        const box = document.getElementById("box");
+        if (box) box.remove();
 
-            if (urlParams.get("browserMode")) {
-                browserMode = urlParams.get("browserMode");
-            }
+        div.appendChild(sub);
+        document.body.appendChild(div);
 
-            // If a rom query parameter is present, load immediately.
-            if (urlParams.get("rom")) {
-                console.log(`Loading ROM from URL: roms/${urlParams.get("rom")}`);
-                run(false, urlParams.get("rom"));
-            } else {
-                // Otherwise, enumerate roms/ and show buttons to pick one.
-                listRoms();
-            }
+        // Configure EmulatorJS (GBA only)
+        window.EJS_player        = "#game";
+        window.EJS_gameName      = parts.slice(0, -1).join(".") || file;
+        window.EJS_biosUrl       = "";
+        window.EJS_gameUrl       = url;
+        window.EJS_core          = "gba";
+        window.EJS_pathtodata    = "https://cdn.emulatorjs.org/latest/data/";
+        window.EJS_startOnLoaded = true;
+        window.EJS_DEBUG_XX      = enableDebug;
+        window.EJS_disableDatabases = true;
+        window.EJS_threads       = enableThreads;
+        if (browserMode) {
+          window.EJS_browserMode = browserMode;
+        }
 
-            // Build a ROM list UI by either:
-            //  1) fetching roms/manifest.json (array of filenames), or
-            //  2) fetching the roms/ directory index HTML and scraping links (works with simple static servers).
-            async function listRoms() {
-                const container = document.getElementById("rom-list");
-                const exts = ["gba","gb","gbc","nds","nes","sfc","smc","z64","n64","pce","ngp","ws","col","d64"];
-                const isRom = (name) => exts.some(e => name.toLowerCase().endsWith("." + e));
-
-                // Try manifest.json first
-                try {
-                    const r = await fetch("roms/manifest.json", { cache: "no-store" });
-                    if (r.ok) {
-                        const arr = await r.json();
-                        renderList(Array.isArray(arr) ? arr.filter(isRom) : []);
-                        return;
-                    }
-                } catch (_) {}
-
-                // Fallback: fetch directory listing and scrape links
-                try {
-                    const r = await fetch("roms/", { cache: "no-store" });
-                    const html = await r.text();
-                    const doc = new DOMParser().parseFromString(html, "text/html");
-                    const names = Array.from(doc.querySelectorAll("a"))
-                        .map(a => a.getAttribute("href") || "")
-                        .filter(h => h && !h.startsWith("?") && !h.startsWith("/"))
-                        .map(h => decodeURIComponent(h.replace(/\/$/, "")))
-                        .filter(isRom)
-                        .sort((a,b) => a.localeCompare(b, undefined, {sensitivity:"base"}));
-                    renderList(names);
-                } catch (e) {
-                    console.error("Could not list roms/:", e);
-                    container.textContent = "No ROMs found in roms/.";
-                }
-
-                function renderList(files) {
-                    const c = document.getElementById("rom-list");
-                    c.innerHTML = "";
-                    if (!files.length) {
-                        c.textContent = "No ROMs found in roms/.";
-                        return;
-                    }
-                    files.forEach(name => {
-                        const btn = document.createElement("button");
-                        btn.className = "rom-btn";
-                        btn.textContent = name;
-                        btn.onclick = () => run(false, name);
-                        c.appendChild(btn);
-                    });
-                }
-            }
-
-            async function run(upload, file) {
-                const url = upload ? input.files[0] : `roms/${file}`;
-                const parts = upload ? input.files[0].name.split(".") : file.split(".");
-
-                const core = await (async (ext) => {
-                    if (["fds", "nes", "unif", "unf"].includes(ext))
-                        return "nes"
-
-                    if (["smc", "fig", "sfc", "gd3", "gd7", "dx2", "bsx", "swc"].includes(ext))
-                        return "snes"
-
-                    if (["z64", "n64"].includes(ext))
-                        return "n64"
-
-                    if (["pce"].includes(ext))
-                        return "pce"
-
-                    if (["ngp", "ngc"].includes(ext))
-                        return "ngp"
-
-                    if (["ws", "wsc"].includes(ext))
-                        return "ws"
-
-                    if (["col", "cv"].includes(ext))
-                        return "coleco"
-
-                    if (["d64"].includes(ext))
-                        return "vice_x64sc"
-
-                    if (["nds", "gba", "gb", "z64", "n64"].includes(ext))
-                        return ext
-
-                    return await new Promise(resolve => {
-                        var coreValues = {
-                            "Nintendo 64": "n64",
-                            "Nintendo Game Boy": "gb",
-                            "Nintendo Game Boy Advance": "gba",
-                            "Nintendo DS": "nds",
-                            "Nintendo Entertainment System": "nes",
-                            "Super Nintendo Entertainment System": "snes",
-                            "PlayStation": "psx",
-                            "Virtual Boy": "vb",
-                            "Sega Mega Drive": "segaMD",
-                            "Sega Master System": "segaMS",
-                            "Sega CD": "segaCD",
-                            "Atari Lynx": "lynx",
-                            "Sega 32X": "sega32x",
-                            "Atari Jaguar": "jaguar",
-                            "Sega Game Gear": "segaGG",
-                            "Sega Saturn": "segaSaturn",
-                            "Atari 7800": "atari7800",
-                            "Atari 2600": "atari2600",
-                            "Arcade": "arcade",
-                            "NEC TurboGrafx-16/SuperGrafx/PC Engine": "pce",
-                            "NEC PC-FX": "pcfx",
-                            "SNK NeoGeo Pocket (Color)": "ngp",
-                            "Bandai WonderSwan (Color)": "ws",
-                            "ColecoVision": "coleco",
-                            "Commodore 64": "vice_x64sc",
-                            "Commodore 128": "vice_x128",
-                            "Commodore VIC20": "vice_xvic",
-                            "Commodore Plus/4": "vice_xplus4",
-                            "Commodore PET": "vice_xpet",
-                            "DOSBOX-PURE": "dosbox_pure"
-                        }
-
-                        const cores = Object.keys(coreValues).sort().reduce(
-                            (obj, key) => { 
-                                obj[key] = coreValues[key]; 
-                                return obj;
-                            }, 
-                            {}
-                        );
-
-                        const button = document.createElement("button")
-                        const select = document.createElement("select")
-
-                        for (const type in cores) {
-                            const option = document.createElement("option")
-
-                            option.value = cores[type]
-                            option.textContent = type
-                            select.appendChild(option)
-                        }
-
-                        button.onclick = () => resolve(select[select.selectedIndex].value)
-                        button.textContent = "Load game"
-                        box.innerHTML = ""
-
-                        box.appendChild(select)
-                        box.appendChild(button)
-                    })
-                })(parts.pop())
-
-                const div = document.createElement("div")
-                const sub = document.createElement("div")
-                const script = document.createElement("script")
-
-                sub.id = "game"
-                div.id = "display"
-
-                const top = document.getElementById("top");
-                if (top) top.remove();
-                box.remove()
-                div.appendChild(sub)
-                document.body.appendChild(div)
-
-                window.EJS_player = "#game";
-                window.EJS_gameName = parts.shift();
-                window.EJS_biosUrl = "";
-                window.EJS_gameUrl = url;
-                window.EJS_core = core;
-                window.EJS_pathtodata = "https://cdn.emulatorjs.org/latest/data/";
-                window.EJS_startOnLoaded = true;
-                window.EJS_DEBUG_XX = enableDebug;
-                window.EJS_disableDatabases = true;
-                window.EJS_threads = enableThreads;
-                if (browserMode) {
-                    window.EJS_browserMode = browserMode;
-                }
-
-                script.src = "https://cdn.emulatorjs.org/latest/data/loader.js";
-                document.body.appendChild(script);
-            }
-        </script>
-    </body>
+        // Load runtime from CDN
+        script.src = "https://cdn.emulatorjs.org/latest/data/loader.js";
+        document.body.appendChild(script);
+      }
+    </script>
+  </body>
 </html>
