@@ -11,4 +11,7 @@ set -x
 echo "Initializing Butano and Emulator.js submodules"
 git submodule update --init --recursive
 
+echo "Installing xpra"
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xpra
+
 echo "Finished postCreate.sh"
