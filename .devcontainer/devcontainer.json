@@ -2,6 +2,5 @@
   "name": "Butano (devkitARM)",
   "image": "devkitpro/devkitarm:latest",
   "forwardPorts": [8080],
-  "postCreateCommand": "bash -lc .devcontainer/postCreate.sh",
-  "postStartCommand": "bash .devcontainer/postStart.sh"
+  "postCreateCommand": "bash -lc .devcontainer/postCreate.sh"
 }
