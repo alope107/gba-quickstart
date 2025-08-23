@@ -11,11 +11,4 @@ set -x
 echo "Initializing Butano and Emulator.js submodules"
 git submodule update --init --recursive
 
-# echo "Installing npm"
-sudo apt-get update
-sudo apt-get install -y nodejs npm
-
-echo "NPM install for Emulator.js"
-npm install --prefix third_party/EmulatorJS
-
 echo "Finished postCreate.sh"
