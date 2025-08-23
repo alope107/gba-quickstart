@@ -25,38 +25,27 @@
 
             #box {
                 color: #aaa;
-                height: 20em;
+                min-height: 12em;
                 width: 30em;
-                max-width: 80%;
-                max-height: 80%;
+                max-width: 90%;
                 background-color: #333;
                 border-radius: 0.4em;
                 border: 2px solid #555;
                 position: relative;
                 flex-direction: column;
                 transition-duration: 0.2s;
-                overflow: hidden;
+                overflow: auto;
                 font-family: monospace;
                 font-weight: bold;
-                font-size: 20px;
+                font-size: 16px;
                 margin: 5px;
                 text-align: center;
                 padding: 10px;
             }
 
-            #box:hover, #box[drag] {
+            #box:hover {
                 border-color: #1AAFFF;
                 color: #ddd
-            }
-
-            #input {
-                cursor: pointer;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
             }
 
             #display {
@@ -64,10 +53,10 @@
                 height: 100%
             }
 
-            select, button {
+            select, button, .rom-btn {
                 padding: 0.6em 0.4em;
-                margin: 0.5em;
-                width: 15em;
+                margin: 0.25em;
+                width: 20em;
                 max-width: 100%;
                 font-family: monospace;
                 font-weight: bold;
@@ -80,7 +69,7 @@
                 transition-duration: 0.2s
             }
 
-            select:hover, button:hover {
+            select:hover, button:hover, .rom-btn:hover {
                 background-color: #666;
                 color: #ddd
             }
@@ -94,6 +83,18 @@
             #top {
                 margin: 5px;
             }
+
+            .rom-list-title {
+                margin: 0.5em 0 0.25em;
+                font-size: 18px;
+                color: #ddd;
+            }
+
+            .hint {
+                font-size: 12px;
+                color: #888;
+                margin-bottom: 0.5em;
+            }
         </style>
     </head>
 
@@ -104,8 +105,9 @@
             <br>
         </div>
         <div id="box">
-            <input type = file id = input>
-            Drag ROM file or click here
+            <div class="rom-list-title">Select a ROM</div>
+            <div class="hint">Looking in <code>roms/</code>. You can also use <code>?rom=filename.gba</code>.</div>
+            <div id="rom-list">Loading…</div>
         </div>
 
         <script>
@@ -137,9 +139,65 @@
                 browserMode = urlParams.get("browserMode");
             }
 
+            // If a rom query parameter is present, load immediately.
             if (urlParams.get("rom")) {
                 console.log(`Loading ROM from URL: roms/${urlParams.get("rom")}`);
                 run(false, urlParams.get("rom"));
+            } else {
+                // Otherwise, enumerate roms/ and show buttons to pick one.
+                listRoms();
+            }
+
+            // Build a ROM list UI by either:
+            //  1) fetching roms/manifest.json (array of filenames), or
+            //  2) fetching the roms/ directory index HTML and scraping links (works with simple static servers).
+            async function listRoms() {
+                const container = document.getElementById("rom-list");
+                const exts = ["gba","gb","gbc","nds","nes","sfc","smc","z64","n64","pce","ngp","ws","col","d64"];
+                const isRom = (name) => exts.some(e => name.toLowerCase().endsWith("." + e));
+
+                // Try manifest.json first
+                try {
+                    const r = await fetch("roms/manifest.json", { cache: "no-store" });
+                    if (r.ok) {
+                        const arr = await r.json();
+                        renderList(Array.isArray(arr) ? arr.filter(isRom) : []);
+                        return;
+                    }
+                } catch (_) {}
+
+                // Fallback: fetch directory listing and scrape links
+                try {
+                    const r = await fetch("roms/", { cache: "no-store" });
+                    const html = await r.text();
+                    const doc = new DOMParser().parseFromString(html, "text/html");
+                    const names = Array.from(doc.querySelectorAll("a"))
+                        .map(a => a.getAttribute("href") || "")
+                        .filter(h => h && !h.startsWith("?") && !h.startsWith("/"))
+                        .map(h => decodeURIComponent(h.replace(/\/$/, "")))
+                        .filter(isRom)
+                        .sort((a,b) => a.localeCompare(b, undefined, {sensitivity:"base"}));
+                    renderList(names);
+                } catch (e) {
+                    console.error("Could not list roms/:", e);
+                    container.textContent = "No ROMs found in roms/.";
+                }
+
+                function renderList(files) {
+                    const c = document.getElementById("rom-list");
+                    c.innerHTML = "";
+                    if (!files.length) {
+                        c.textContent = "No ROMs found in roms/.";
+                        return;
+                    }
+                    files.forEach(name => {
+                        const btn = document.createElement("button");
+                        btn.className = "rom-btn";
+                        btn.textContent = name;
+                        btn.onclick = () => run(false, name);
+                        c.appendChild(btn);
+                    });
+                }
             }
 
             async function run(upload, file) {
@@ -244,7 +302,7 @@
                 div.id = "display"
 
                 const top = document.getElementById("top");
-                top.remove();
+                if (top) top.remove();
                 box.remove()
                 div.appendChild(sub)
                 document.body.appendChild(div)
@@ -254,7 +312,7 @@
                 window.EJS_biosUrl = "";
                 window.EJS_gameUrl = url;
                 window.EJS_core = core;
-                window.EJS_pathtodata = "https://cdn.emulatorjs.org/latest/data";
+                window.EJS_pathtodata = "https://cdn.emulatorjs.org/latest/data/";
                 window.EJS_startOnLoaded = true;
                 window.EJS_DEBUG_XX = enableDebug;
                 window.EJS_disableDatabases = true;
@@ -266,13 +324,6 @@
                 script.src = "https://cdn.emulatorjs.org/latest/data/loader.js";
                 document.body.appendChild(script);
             }
-            
-            input.onchange = async () => {
-                run(true);
-            }
-            
-            box.ondragover = () => box.setAttribute("drag", true);
-            box.ondragleave = () => box.removeAttribute("drag");
         </script>
     </body>
 </html>
