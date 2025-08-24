@@ -1,6 +1,8 @@
 {
-  "name": "Butano (devkitARM)",
-  "image": "devkitpro/devkitarm:latest",
+  "name": "GBA Quickstart",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "forwardPorts": [8080],
   "postCreateCommand": "bash -lc .devcontainer/postCreate.sh",
   "customizations": {
