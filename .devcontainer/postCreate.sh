@@ -62,3 +62,5 @@ echo "Finished postCreate.sh"
 # chmod +x LibreSprite-anylinux-x86_64.AppImage
 # ./LibreSprite-anylinux-x86_64.AppImage --appimage-extract
 # mv squashfs-root/ libresprite
+
+#xpra start :100   --bind-tcp=0.0.0.0:14500 --html=on   --daemon=no --exit-with-children --opengl=off   --system-tray=disabled --notifications=disabled   --printing=disabled --pulseaudio=disabled --webcam=disabled --mdns=off   --start-child="/tools/libresprite/AppRun"
