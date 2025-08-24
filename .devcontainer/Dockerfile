@@ -26,3 +26,6 @@ RUN curl -fL "${LIBRESPRITE_URL}" -o ${LIBRESPRITE_APPIMAGE} && \
     rm ${LIBRESPRITE_APPIMAGE} && \
     ln -sf /tools/libresprite/AppRun /usr/local/bin/libresprite
 
+# Set up libresprite so it scales properly in xpra
+RUN mkdir -p /root/.config/libresprite
+COPY libresprite.ini /root/.config/libresprite/libresprite.ini
