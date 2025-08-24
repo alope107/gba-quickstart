@@ -58,3 +58,7 @@ echo "Finished postCreate.sh"
 #sudo apt-get update
 #sudo apt-get install xpra
 
+# cd /tools
+# chmod +x LibreSprite-anylinux-x86_64.AppImage
+# ./LibreSprite-anylinux-x86_64.AppImage --appimage-extract
+# mv squashfs-root/ libresprite
