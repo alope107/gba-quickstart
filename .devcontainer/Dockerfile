@@ -17,11 +17,12 @@ ARG LIBRESPRITE_URL=https://github.com/LibreSprite/LibreSprite/releases/download
 # Make /tools and download LibreSprite AppImage
 # Extract the AppImage to work around lack of FUSE support
 # Symlink to put on PATH
-RUN mkdir -p /tools && \
-    curl -fL "${LIBRESPRITE_URL}" -o /tools/${LIBRESPRITE_APPIMAGE} && \
-    chmod +x /tools/${LIBRESPRITE_APPIMAGE} && \
-    /tools/${LIBRESPRITE_APPIMAGE} --appimage-extract && \
-    mv /tools/squashfs-root /tools/libresprite && \
-    rm -f /tools/${LIBRESPRITE_APPIMAGE} && \
+RUN mkdir -p /tools
+WORKDIR /tools
+RUN curl -fL "${LIBRESPRITE_URL}" -o ${LIBRESPRITE_APPIMAGE} && \
+    chmod +x ${LIBRESPRITE_APPIMAGE} && \
+    ${LIBRESPRITE_APPIMAGE} --appimage-extract && \
+    mv squashfs-root libresprite && \
+    rm ${LIBRESPRITE_APPIMAGE} && \
     ln -sf /tools/libresprite/AppRun /usr/local/bin/libresprite
 
