@@ -21,7 +21,7 @@ RUN mkdir -p /tools
 WORKDIR /tools
 RUN curl -fL "${LIBRESPRITE_URL}" -o ${LIBRESPRITE_APPIMAGE} && \
     chmod +x ${LIBRESPRITE_APPIMAGE} && \
-    ${LIBRESPRITE_APPIMAGE} --appimage-extract && \
+    ./${LIBRESPRITE_APPIMAGE} --appimage-extract && \
     mv squashfs-root libresprite && \
     rm ${LIBRESPRITE_APPIMAGE} && \
     ln -sf /tools/libresprite/AppRun /usr/local/bin/libresprite
