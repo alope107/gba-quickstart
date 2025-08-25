@@ -32,4 +32,4 @@ COPY libresprite.ini /root/.config/libresprite/libresprite.ini
 
 # Test to see if new Docker flow is being used
 # TODO: Remove this
-RUN mkdir -p /dummy
+RUN mkdir -p /dummy2
