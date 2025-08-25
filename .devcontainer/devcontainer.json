@@ -28,7 +28,9 @@
           "*.h": "cpp"
         },
         "editor.formatOnSave": true,
-        "editor.rulers": [100]
+        "editor.rulers": [100],
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.enablePersistentSessions": true
       }
     }
   }
