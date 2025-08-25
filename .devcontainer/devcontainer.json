@@ -1,8 +1,6 @@
 {
   "name": "GBA Quickstart",
-  "build": {
-    "dockerfile": "Dockerfile"
-  },
+  "image": "ghcr.io/alope107/gba-quickstart-devcontainer:latest",
   "forwardPorts": [8080],
   "postCreateCommand": "bash -lc .devcontainer/postCreate.sh",
   "customizations": {

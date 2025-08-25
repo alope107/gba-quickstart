@@ -29,3 +29,7 @@ RUN curl -fL "${LIBRESPRITE_URL}" -o ${LIBRESPRITE_APPIMAGE} && \
 # Set up libresprite so it scales properly in xpra
 RUN mkdir -p /root/.config/libresprite
 COPY libresprite.ini /root/.config/libresprite/libresprite.ini
+
+# Test to see if new Docker flow is being used
+# TODO: Remove this
+RUN mkdir -p /dummy
