@@ -1,8 +1,17 @@
 {
   "name": "GBA Quickstart",
   "image": "ghcr.io/alope107/gba-quickstart-devcontainer:latest",
-  "forwardPorts": [8080],
+  "forwardPorts": [8000, 14500],
+  "portsAttributes": {
+    "8000": {
+      "label": "Emulator"
+    },
+    "14500": {
+      "label": "LibreSprite"
+    }
+  },
   "postCreateCommand": "bash -lc .devcontainer/postCreate.sh",
+  "postStartCommand": "bash -lc .devcontainer/postStart.sh",
   "customizations": {
     "vscode": {
       "extensions": [
