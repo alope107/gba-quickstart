@@ -33,3 +33,7 @@ COPY libresprite.ini /root/.config/libresprite/libresprite.ini
 COPY emuserver.sh /scripts/emuserver.sh
 COPY emuserver.conf /etc/supervisor/conf.d/
 
+# Set up xpra server (used for LibreSprite)  to be handled by supervisord
+COPY xpraserver.sh /scripts/xpraserver.sh
+COPY xpraserver.conf /etc/supervisor/conf.d/
+
