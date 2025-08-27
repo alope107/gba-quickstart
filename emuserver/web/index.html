@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>EmulatorJS – GBA</title>
+    <title>GBA Emulator</title>
     <link rel="icon" href="docs/favicon.ico" sizes="16x16 32x32 48x48 64x64" type="image/vnd.microsoft.icon">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
@@ -45,7 +45,7 @@
     </div>
     <div id="box">
       <div class="rom-list-title">Select a GBA ROM</div>
-      <div class="hint">Looking in <code>roms/</code>. Or use <code>?rom=filename.gba</code>.</div>
+      <div class="hint">Lists come from <code>/_roms</code>. Or use <code>?rom=relative/path/to/file.gba</code>.</div>
       <div id="rom-list">Loading…</div>
     </div>
 
@@ -79,51 +79,33 @@
         browserMode = urlParams.get("browserMode");
       }
 
-      // If a rom query parameter is present, load immediately; otherwise list roms/.
+      // If a rom query parameter is present, load immediately; otherwise list from /_roms.
       if (urlParams.get("rom")) {
-        console.log(`Loading ROM from URL: roms/${urlParams.get("rom")}`);
-        run(urlParams.get("rom"));
+        const romPath = urlParams.get("rom");
+        console.log(`Loading ROM from server: /rom/${romPath}`);
+        run(romPath);
       } else {
         listRoms();
       }
 
-      // List only .gba files under roms/
+      // Fetch list from /_roms and render
       async function listRoms() {
         const container = document.getElementById("rom-list");
-        const isGBA = (name) => name.toLowerCase().endsWith(".gba");
-
-        // Try manifest.json first
         try {
-          const r = await fetch("roms/manifest.json", { cache: "no-store" });
-          if (r.ok) {
-            const arr = await r.json();
-            renderList(Array.isArray(arr) ? arr.filter(isGBA) : []);
-            return;
-          }
-        } catch (_) {}
-
-        // Fallback: fetch directory index and scrape links
-        try {
-          const r = await fetch("roms/", { cache: "no-store" });
-          const html = await r.text();
-          const doc = new DOMParser().parseFromString(html, "text/html");
-          const names = Array.from(doc.querySelectorAll("a"))
-            .map(a => a.getAttribute("href") || "")
-            .filter(h => h && !h.startsWith("?") && !h.startsWith("/"))
-            .map(h => decodeURIComponent(h.replace(/\/$/, "")))
-            .filter(isGBA)
-            .sort((a,b) => a.localeCompare(b, undefined, {sensitivity:"base"}));
-          renderList(names);
+          const r = await fetch("/_roms", { cache: "no-store" });
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          const arr = await r.json();
+          renderList(Array.isArray(arr) ? arr : []);
         } catch (e) {
-          console.error("Could not list roms/:", e);
-          container.textContent = "No ROMs found in roms/.";
+          console.error("Could not list ROMs:", e);
+          container.textContent = "No ROMs found or listing failed.";
         }
 
         function renderList(files) {
           const c = document.getElementById("rom-list");
           c.innerHTML = "";
           if (!files.length) {
-            c.textContent = "No ROMs found in roms/.";
+            c.textContent = "No ROMs found.";
             return;
           }
           files.forEach(name => {
@@ -136,9 +118,11 @@
         }
       }
 
-      async function run(file) {
-        const url = `roms/${file}`;
-        const parts = file.split(".");
+      // Run a selected ROM via the server's /rom/<path>
+      async function run(relativePath) {
+        const url = `/rom/${encodeURI(relativePath)}`;
+        const fileName = relativePath.split("/").pop();
+        const parts = (fileName || "").split(".");
 
         // Build display container
         const div = document.createElement("div");
@@ -158,7 +142,7 @@
 
         // Configure EmulatorJS (GBA only)
         window.EJS_player        = "#game";
-        window.EJS_gameName      = parts.slice(0, -1).join(".") || file;
+        window.EJS_gameName      = parts.slice(0, -1).join(".") || fileName || relativePath;
         window.EJS_biosUrl       = "";
         window.EJS_gameUrl       = url;
         window.EJS_core          = "gba";
