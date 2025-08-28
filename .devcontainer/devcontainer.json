@@ -42,7 +42,10 @@
         "editor.formatOnSave": true,
         "editor.rulers": [100],
         "terminal.integrated.defaultProfile.linux": "bash",
-        "terminal.integrated.enablePersistentSessions": true
+        "terminal.integrated.enablePersistentSessions": true,
+        "workbench.editorAssociations": {
+          "*.md": "vscode.markdown.preview.editor"
+        }
       }
     }
   }
