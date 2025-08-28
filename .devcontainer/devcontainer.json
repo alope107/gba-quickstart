@@ -1,6 +1,6 @@
 {
   "name": "GBA Quickstart",
-  "image": "ghcr.io/alope107/gba-quickstart-devcontainer:latest",
+  "image": "shim/Dockerfile", // Change this to just "Dockerfile" if you're making container edits just for yourself
   "forwardPorts": [8000, 14500],
   "portsAttributes": {
     "8000": {
