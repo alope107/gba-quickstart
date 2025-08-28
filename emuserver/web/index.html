@@ -50,18 +50,11 @@
     </div>
 
     <script>
-      // ---- Options (kept for convenience) ----
-      let enableDebug = false;
+      let enableDebug = true;
       let enableThreads = false;
       let browserMode;
 
       const urlParams = new URLSearchParams(window.location.search);
-      if (parseInt(urlParams.get("debug")) === 1 || urlParams.get("debug") === "true") {
-        enableDebug = true;
-        console.log("Debug is enabled");
-      } else {
-        console.log("Debug is disabled");
-      }
 
       if (parseInt(urlParams.get("threads")) === 1 || urlParams.get("threads") === "true") {
         if (window.SharedArrayBuffer) {
