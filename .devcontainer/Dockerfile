@@ -1,6 +1,3 @@
-# Interested in changing the devcontainer for your own purposes?
-# After making your changes here, edit devcontainer.json to point to "Dockerfile" instead of the shim
-
 FROM devkitpro/devkitarm:latest
 
 # Install xpra for x forwarding GUI apps like libresprite
