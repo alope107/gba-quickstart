@@ -46,7 +46,7 @@ async function listRoms() {
         const c = document.getElementById("rom-list");
         c.innerHTML = "";
         if (!files.length) {
-            c.textContent = "No ROMs found. Compile your game using 'make'";
+            c.textContent = "No ROMs found. Change to your game directory and compile your game using 'make'. Check to make sure there's no compilation errors!";
             return;
         }
         files.forEach(name => {
