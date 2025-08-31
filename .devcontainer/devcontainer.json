@@ -43,6 +43,8 @@
         "editor.rulers": [100],
         "terminal.integrated.defaultProfile.linux": "bash",
         "terminal.integrated.enablePersistentSessions": true,
+        "terminal.integrated.persistentSessionReviveProcess": "onExit",
+        "window.restoreWindows": "all",
         "workbench.editorAssociations": {
           "*.md": "vscode.markdown.preview.editor"
         }

@@ -38,3 +38,5 @@ COPY xpraserver.sh /scripts/xpraserver.sh
 COPY xpraserver.conf /etc/supervisor/conf.d/
 
 COPY emuserver/ /emuserver
+
+CMD [ "bash" ]
