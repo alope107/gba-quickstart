@@ -23,7 +23,7 @@ Your Codespace is finished building when you see a list of files on the side, a 
    
 ## Compiling the sample game
 
-You'll run commands in the Codespace terminal to compile the game so you can run it. When you create the Codespace, its working directory is `/workspaces/NAME-OF-YOUR-GAME#`, also known as the root directory of your repository. You have other directories in your repository, the most important of which is `game/`. 
+You'll run commands in the Codespace terminal to compile the game so you can run it. When you create the Codespace, its working directory is `/workspaces/NAME-OF-YOUR-GAME`, also known as the root directory of your repository. You have other directories in your repository, the most important of which is `game/`. 
 
 
 1. In the left view panel, you can click the arrow next to the `game/` directory to open it and see the files inside.
