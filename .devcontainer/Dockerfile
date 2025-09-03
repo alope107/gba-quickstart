@@ -27,16 +27,18 @@ RUN curl -fL "${LIBRESPRITE_URL}" -o ${LIBRESPRITE_APPIMAGE} && \
 
 # Set up libresprite so it scales properly in xpra
 RUN mkdir -p /root/.config/libresprite
-COPY libresprite.ini /root/.config/libresprite/libresprite.ini
+COPY config/libresprite.ini /root/.config/libresprite/libresprite.ini
 
-# Set up Emulator.js server to be handled by supervisord
-COPY emuserver.sh /scripts/emuserver.sh
-COPY emuserver.conf /etc/supervisor/conf.d/
+# Copy configration for supervised processes (currently LibreSprite and emulator)
+COPY config/supervisor/ /etc/supervisor/conf.d/
 
-# Set up xpra server (used for LibreSprite)  to be handled by supervisord
-COPY xpraserver.sh /scripts/xpraserver.sh
-COPY xpraserver.conf /etc/supervisor/conf.d/
+# Copy devcontainer and process scripts.
+# By default devoncontainer.json reads from the image copy, NOT the one in the clone of the repo
+# This means that when there are image updates, you can get the new functionality just by recreating
+# your Codespace. You don't need to pull in any changes.
+COPY scripts/ /scripts
 
+# Copy the Python and static assets for the emulation tool
 COPY emuserver/ /emuserver
 
 CMD [ "bash" ]

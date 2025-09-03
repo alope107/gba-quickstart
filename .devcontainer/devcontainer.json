@@ -13,8 +13,8 @@
       "label": "LibreSprite"
     }
   },
-  "postCreateCommand": "bash -lc .devcontainer/postCreate.sh",
-  "postStartCommand": "bash -lc .devcontainer/postStart.sh",
+  "postCreateCommand": "bash -lc /scripts/postCreate.sh", // Change script path to .devcontainer/postCreate.sh" if you're editing just for yourself
+  "postStartCommand": "bash -lc /scripts/postStart.sh", // Change script path to .devcontainer/postStart.sh" if you're editing just for yourself
   "customizations": {
     "vscode": {
       "extensions": [

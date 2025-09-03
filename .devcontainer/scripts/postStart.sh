@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# Wanting to edit this for yourself locally without creating a whole new docker image?
+# 
+
 set -euo pipefail
 
 echo "Beginning postStart.sh"

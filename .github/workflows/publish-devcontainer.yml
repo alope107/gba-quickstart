@@ -1,6 +1,7 @@
 name: Publish devcontainer image
 on:
   push:
+    if: github.repository == 'alope107/gba-quickstart' # Remove this line if you want to push your own images to GHCR
     branches: [ main ]
     paths:
       - '.devcontainer/**'
