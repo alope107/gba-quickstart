@@ -46,3 +46,6 @@ build
 # GBA compiled files
 *.elf
 *.gba
+
+# Mac Junk
+.DS_Store
