@@ -1,8 +1,6 @@
 {
   "name": "GBA Quickstart",
-  "build": {
-    "dockerfile": "devkitpro/devkitarm:20260221",
-  }, 
+  "image": "devkitpro/devkitarm:20260221",
   "customizations": {
     "vscode": {
       "extensions": [
