@@ -3,7 +3,7 @@
 ## Prerequisites
 
 The only things you need for this tutorial are a web browser and a GitHub account. 
-Go to [GitHub Signup](https://github.com/signup) to create a new GitHub account if you don't have one already.
+If you don't already have a GitHub account, in a new tab go to [GitHub Signup](https://github.com/signup).
 After you've logged in to GitHub, you're ready to begin the tutorial.
 
 ## Creating the Codespace
@@ -23,12 +23,13 @@ Your Codespace is finished building when you see a list of files on the side, a 
    
 ## Compiling the sample game
 
-You'll run commands in the Codespace terminal to compile the game so you can run it. When you create the Codespace, its working directory is `/workspaces/NAME-OF-YOUR-GAME`, also known as the root directory of your repository. You have other directories in your repository, the most important of which is `game/`. 
+You'll run commands in the Codespace terminal to compile the game so you can run it. When you create the Codespace, its working directory (folder) is `/workspaces/NAME-OF-YOUR-GAME`, also known as the root directory of your repository. You have other directories (folders) in your repository, the most important of which is `game/`. 
 
 
 1. In the left view panel, you can click the arrow next to the `game/` directory to open it and see the files inside.
+1. Make sure you've got a clean terminal open. At the top of the screen click on Terminal > New Terminal. This will make a new terminal at the bottom of your screen.
 1. In the terminal at the bottom, type `cd game` and hit Enter to move the working directory to the `game/` directory so you can compile the files there.
-1. Type `make` and hit Enter. This compiles the game files into a ROM, taking about a minute for this demo game.
+1. Type `make` and hit Enter. This compiles the game files into a ROM, a playable Game Boy Advance game. It will take about a minute for this demo game.
 
 This process takes a minute or so because it's the first time the game has been compiled. 
 If you make changes and compile again, it'll be faster because it'll only have to compile what was changed.
@@ -36,16 +37,13 @@ When the compile step is finished, you'll see a new file under the `game/` direc
 
 ## Running the sample game
 
-Now you can run the sample game you compiled. This Codespace includes a GBA Emulator that can play `.gba` ROM files.
-
-1. In the left file picker, click on `tools.md` to open it in the main view window.
-1. Click on the "Emulator" link to open the web GBA emulator. It should open in a new tab.
-1. You should see your `.gba` ROM file listed. Click it and the emulator should start running the game! Use the arrow keys to move the yellow sprite around.
+1. Find the file `game.gba` underneath the `game/` directory on the left side of your screen.
+1. Click on `game.gba`. In the center of your screen, a "Start Game" button will appear.
+1. Click the "Start Game" button. In a few seconds the game will start. Use the arrow keys to move the dot around!
    
 ## Making changes to the sample game code
 
-1. Switch back to the Codespace tab.
-1. In the left file picker, choose `game/src/Main.cpp` to open it in the main view window. This file holds the game logic.
+1. In the left file picker, choose `game/src/Main.cpp` (expand the `game/` folder, expand the `src/` folder and click on `Main.cpp`) to open it in the main view window. This file holds the game logic.
 
 You'll make two changes: changing the backdrop color and changing the speed at which the sprite moves. 
 
@@ -56,9 +54,7 @@ Each time you want to test changes to the code, you need to recompile the ROM.
 
 1. Check that the terminal is still in the `game` directory (`game` should show up as the end of the path).
 1. Type `make` and hit Enter to rebuild the game with your new changes. If it fails, check the error message to see if there were any mistakes in the code you changed, like a missing comma or bracket.
-1. Switch back to the emulator tab and **refresh the page**. If you closed the tab, you can always reopen it by opening `tools.md` and clicking the Emulator link again.
-1. Select your ROM again.
-1. You should see your new backdrop color! Use the arrow keys to see the character zip around at high speed.
+1. Click on the the `game.gba` file and click "Start Game" again. You should see the modified version of your game! Play around with arrow keys again.
 
 Even though you've made changes in your Codespace and compiled the new ROM, everything gets deleted when a Codespace disappears.
 Continue the tutorial to save your changes permanently.
@@ -85,21 +81,16 @@ If you're unhappy with a commit, you can also undo or revert commits to go back 
 
 ## Editing a game sprite
 
-You've already edited the game logic by modifying `Main.cpp`. Now, you'll edit the player sprite. 
+You've already edited the game logic by modifying `Main.cpp`. Now, you'll edit the player sprite (pixel graphic). 
 
-1. Click on the icon with the two pieces of paper on the left bar to go back to the file select tab view.
-1. Choose `tools.md` again, and this time open the LibreSprite Sprite Editor. This should open LibreSprite in a new window.
-1. Click "Open File".
-1. Double-click through the folders to get to `NAME-OF-YOUR-GAME > game > graphics > dot.bmp`. This opens the sprite for editing. You may need to zoom in using (Ctrl-+) or (Cmd-+) depending on your operating system.
-1. Use the palette on the left to select a color, and use the mouse to draw a smiley face on the circle or make any other changes that strike your fancy.
-1. Click `File -> Save` in the menu at the top of the editor to save your edited sprite back to the Codespace.
-1. Switch back to the Codespace tab so you can recompile the ROM again. Even a small change to a sprite needs a recompile of the whole ROM! 
-1. Make sure the terminal's working directory is the `game/` directory, and run `make`.
-1. Switch back to the emulator tab and refresh the page.
-1. Select your ROM from the list to reopen it. You should see your new sprite! Play around and enjoy.
+1. In the file picker go to `game`, then `graphics`. Click on the `dot.bmp` file.
+1. A sprite editor will appear. Click a color on the right, and click on the sprite to edit it. Add a smiley face to the dot, or dress it up however you want! The changes will autosave in the Codespace.
+1. Once you're done editing your sprite, go back to the terminal at the bottom of the screen. make sure you're in the `game/` directory, then type `make` and hit Enter.
+1. This will recompile the game, including your new changes from the sprite.
+1. Under the `game/` directory find `game.gba` again. Click on it again to see the new version of your game. It should have your new sprite in it!
 
 Remember, even though your sprite change appears in the Codespace, it hasn't been committed and pushed to the repository yet. 
-Go back to the code editor and follow the same steps from the previous section to commit and push the changes to `dot.bmp`.
+Follow the same steps from the previous section to commit and push the changes you made to `dot.bmp`.
 
 ## Next steps
 
@@ -107,7 +98,7 @@ Congratulations! You are now a Game Boy Advance homebrew developer!
 There is a lot more to learn, but you're well on your way. 
 Butano comes preloaded with a number of examples you can find in `third_party/butano/examples`. 
 You can compile them one at a time by navigating your terminal to one of those example directories and running `make`. 
-Afterward, the ROM should show up in the emulator page and you can test it out.
+Afterward, you can open the new `gba` file to test it out.
 
 When you want to return to your codespace later, go back to your repository, click on the green Code button again, select Codespaces. 
 You should see your existing Codespace still there for you to pick up where you left off.
