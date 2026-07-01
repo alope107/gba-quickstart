@@ -1,25 +1,13 @@
 {
   "name": "GBA Quickstart",
-  "build": {
-    "dockerfile": "shim/Dockerfile", // Change this to just "Dockerfile" if you're making container edits just for yourself
-    "options": ["--platform=linux/amd64"]
-  }, 
-  "forwardPorts": [8000, 14500],
-  "portsAttributes": {
-    "8000": {
-      "label": "Emulator"
-    },
-    "14500": {
-      "label": "LibreSprite"
-    }
-  },
-  "postCreateCommand": "bash -lc /scripts/postCreate.sh", // Change script path to .devcontainer/postCreate.sh" if you're editing just for yourself
-  "postStartCommand": "bash -lc /scripts/postStart.sh", // Change script path to .devcontainer/postStart.sh" if you're editing just for yourself
+  "image": "devkitpro/devkitarm:20260221",
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-vscode.cpptools-extension-pack",
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
+        "auberonedu.simple-bmp",
+        "auberonedu.gba-player"
       ],
       "settings": {
         "C_Cpp.intelliSenseEngine": "default",

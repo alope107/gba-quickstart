@@ -43,9 +43,10 @@
 # Butano build directory 
 build
 
-# GBA compiled files
+# GBA compiled/save files
 *.elf
 *.gba
+*.sav
 
 # Mac Junk
 .DS_Store
