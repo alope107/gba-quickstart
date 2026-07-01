@@ -1,6 +1,7 @@
 {
   "name": "GBA Quickstart",
   "image": "devkitpro/devkitarm:20260221",
+  "updateContentCommand": "git submodule update --init --recursive",
   "customizations": {
     "vscode": {
       "extensions": [
