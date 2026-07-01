@@ -15,7 +15,7 @@ It's free up to a generous quota of usage and doesn't require any downloads or m
 1. On the **gba-quickstart** repository page, click the green "Use this template" button near the upper right of the window.
 1. Select "Create a new repository." This creates a copy of the files in a new repository under your own GitHub username.
 1. Name the repository what you want to call your game and add an optional description. Leave the other options at their default values.
-1. Click "Create repository" and wait a few moments for the repository to be generated. When it's finished, you'll see the same files that were in **gba-quickstart**, now copied to your own repository.
+1. Click "Create repository" and wait a few moments for the repository to be generated. When it's finished, refresh the page. You'll then see the same files that were in **gba-quickstart**, now copied to your own repository. 
 1. Click the green "Code" button at the top right of the file list. In the popup, switch to the "Codespaces" tab and click "Create codespace on main."
 1. The Codespace opens and starts to build in a new tab. The first time you do this for a repository it takes about 2-5 minutes. It'll be faster when you re-open the Codespace later. If you're interested, you can click on the blue "Building codespace" link on the bottom right to see the logs as it builds.
 
