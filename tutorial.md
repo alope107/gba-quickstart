@@ -17,7 +17,7 @@ It's free up to a generous quota of usage and doesn't require any downloads or m
 1. Name the repository what you want to call your game and add an optional description. Leave the other options at their default values.
 1. Click "Create repository" and wait a few moments for the repository to be generated. When it's finished, refresh the page. You'll then see the same files that were in **gba-quickstart**, now copied to your own repository. 
 1. Click the green "Code" button at the top right of the file list. In the popup, switch to the "Codespaces" tab and click "Create codespace on main."
-1. The Codespace opens and starts to build in a new tab. The first time you do this for a repository it takes about 2-5 minutes. It'll be faster when you re-open the Codespace later. If you're interested, you can click on the blue "Building codespace" link on the bottom right to see the logs as it builds.
+1. The Codespace opens and starts to build in a new tab. The first time you do this for a repository it takes about 2-5 minutes. It'll be faster when you re-open the Codespace later.
 
 Your Codespace is finished building when you see a list of files on the side, a README.md file in the center view, and a terminal at the bottom of the screen.
    
@@ -27,7 +27,6 @@ You'll run commands in the Codespace terminal to compile the game so you can run
 
 
 1. In the left view panel, you can click the arrow next to the `game/` directory to open it and see the files inside.
-1. Make sure you've got a clean terminal open. At the top of the screen click on Terminal > New Terminal. This will make a new terminal at the bottom of your screen.
 1. In the terminal at the bottom, type `cd game` and hit Enter to move the working directory to the `game/` directory so you can compile the files there.
 1. Type `make` and hit Enter. This compiles the game files into a ROM, a playable Game Boy Advance game. It will take about a minute for this demo game.
 
@@ -69,7 +68,9 @@ If you delete a codespace and it has unpushed changes, they are lost forever!
 If you're familiar with git, you can use your normal command-line workflow in the Codespace terminal to add/commit/push your changes as you would in any repository. 
 If you're new to git, you can do the same things with the git plugin in Codespaces. 
 
-1. On the left of your editor there should be an icon with a couple of circles, one of them blue with a number in it. If you hover over it, it should say "Source Control." Click that icon.
+1. On the left of your editor there should be an icon with a couple of circles, one of them blue with a number in it. If you hover over it, it should say "Source Control." Click that icon. The icon should look something like this:
+    
+    ![git file Icon](media/gitIcon.png)
 1. The sidebar will show that `Main.cpp` is changed. Click the plus sign that appears to the right of it so that it moves to the "Staged Changes" sidebar section.
 1. Above the Commit button, write a short message describing your changes, like "Changed background to red and increased player speed."
 1. Click the Commit button.
@@ -84,6 +85,8 @@ If you're unhappy with a commit, you can also undo or revert commits to go back 
 
 You've already edited the game logic by modifying `Main.cpp`. Now, you'll edit the player sprite (pixel graphic). 
 
+1. Switch back to the file picker view on the left by clicking the icon with the sheets of paper. It should look something like this:
+    ![vscode file icon](media/fileIcon.png)
 1. In the file picker go to `game`, then `graphics`. Click on the `dot.bmp` file.
 1. A sprite editor will appear. Click a color on the right, and click on the sprite to edit it. Add a smiley face to the dot, or dress it up however you want! The changes will autosave in the Codespace.
 1. Once you're done editing your sprite, go back to the terminal at the bottom of the screen. make sure you're in the `game/` directory, then type `make` and hit Enter.
