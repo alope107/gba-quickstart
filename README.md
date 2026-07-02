@@ -8,8 +8,10 @@ gba-quickstart is a preconfigured cloud-based GBA development environment. Make 
 Follow the [getting started tutorial](tutorial.md) and you'll have your first game running in less than 15 minutes!
 
 ## What's included?
-- Emulator.js (for running your game in the browser)
-- LibreSprite (for editing your sprites and backgrounds)
-- Devkitpro (toolchain for compiling GBA ROMs)
-- Butano (a high-level GBA development library in C++)
+
+- DevkitPro, a compiler toolchain for GBA and other console devlopment
+- Butano, a high-level GBA development library in C++
 - Fully configured GitHub Codespace
+- Simple bmp extension for easily editing sprites
+- GBA player extension for playing games directly in VS Code
+    - Uses mGBA emulator and emulator.js
