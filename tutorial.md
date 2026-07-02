@@ -54,7 +54,8 @@ Each time you want to test changes to the code, you need to recompile the ROM.
 
 1. Check that the terminal is still in the `game` directory (`game` should show up as the end of the path).
 1. Type `make` and hit Enter to rebuild the game with your new changes. If it fails, check the error message to see if there were any mistakes in the code you changed, like a missing comma or bracket.
-1. Click on the the `game.gba` file and click "Start Game" again. You should see the modified version of your game! Play around with arrow keys again.
+1. Find the tab near the top of the editor that has the old version of the `game.gba` running in it. Close the old version of the game.
+1. Click on the the `game.gba` file in the file explorer and click "Start Game" again. You should see the modified version of your game! Play around with arrow keys again.
 
 Even though you've made changes in your Codespace and compiled the new ROM, everything gets deleted when a Codespace disappears.
 Continue the tutorial to save your changes permanently.
@@ -92,7 +93,7 @@ You've already edited the game logic by modifying `Main.cpp`. Now, you'll edit t
 Remember, even though your sprite change appears in the Codespace, it hasn't been committed and pushed to the repository yet. 
 Follow the same steps from the previous section to commit and push the changes you made to `dot.bmp`.
 
-## Next steps
+## Exploring Butano Examples
 
 Congratulations! You are now a Game Boy Advance homebrew developer! 
 There is a lot more to learn, but you're well on your way. 
@@ -103,7 +104,30 @@ Afterward, you can open the new `gba` file to test it out.
 When you want to return to your codespace later, go back to your repository, click on the green Code button again, select Codespaces. 
 You should see your existing Codespace still there for you to pick up where you left off.
 
-## Resources
+## Going further
+
+This tutorial is meant to be a quick introduction to whet your appetite. This online editor is convenient, but there are better options if you want to keep developing further. Some options:
+
+### GBA Scenic Route
+
+Interested in learning more about C++ GBA development and Butano at a higher level, similar to the code in this tutorial? Try out the [GBA Scenic Route](https://auberonedu.github.io/gba-scenic-route/) tutorial! It is a beginner focued tutorial that will walk you through setting up a full development environment (though still mostly automated with a devcontainer) and getting the games running on a real Game Boy Advance. It will help you understand how the example you just modified works, and will lead you through techniques to make more sophisticated games.
+
+Note that this is VERY much so a work in progress. There is much unfinished, though it will continue to be developed.
+
+If you're not sure what option to start with, begin here!
+
+[GBA Scenic Route](https://auberonedu.github.io/gba-scenic-route/)
+
+### Tonc
+
+Looking for something lower-level, but less beginner friendly? Check out [tonc](https://gbadev.net/tonc/foreword.html). An amazing, mature tutorial in C that builds concepts from the bottom up.
+
+If the code in this example felt too far away from the hardware, this is the place to go next.
+
+[tonc](https://gbadev.net/tonc/foreword.html).
+
+
+## Additional Resources
 
 - [Butano Docs](https://gvaliente.github.io/butano/)
 - [GBA Dev Discord](https://discord.gg/ctGSNxRkg2)
